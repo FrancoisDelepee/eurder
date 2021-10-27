@@ -26,4 +26,10 @@ public class CustomerController {
         logger.info("getAllCustomers called");
         return customerService.getAllCustomers(adminId);
     }
+
+    @GetMapping(produces = "application/json", path = "/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public CustomerDto getCustomer(@PathVariable String id){
+        return customerService.getCustomerById(id);
+    }
 }
