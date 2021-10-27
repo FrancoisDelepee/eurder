@@ -23,6 +23,16 @@ public class Customer {
         this.phoneNumber = phoneNumber;
     }
 
+    public Customer(String firstName, String lastName, String email, String address, String phoneNumber, boolean isAdmin) {
+        this.id = UUID.randomUUID().toString();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.isAdmin = isAdmin;
+    }
+
     public Customer(CreateCustomerDto customerDto){
         this(customerDto.getFirstName(), customerDto.getLastName(), customerDto.getEmail(), customerDto.getAddress(), customerDto.getPhoneNumber());
     }
