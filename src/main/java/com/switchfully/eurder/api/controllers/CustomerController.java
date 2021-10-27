@@ -1,0 +1,29 @@
+package com.switchfully.eurder.api.controllers;
+
+import com.switchfully.eurder.api.dtos.CustomerDto;
+import com.switchfully.eurder.services.CustomerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(path = "/customers")
+public class CustomerController {
+
+    private final CustomerService customerService;
+    private final Logger logger = LoggerFactory.getLogger(CustomerController.class);
+
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
+    }
+
+    @GetMapping(produces = "application/json")
+    @ResponseStatus(HttpStatus.OK)
+    public List<CustomerDto> getAllCustomer(@RequestHeader String adminId){
+        logger.info("getAllCustomers called");
+        return customerService.getAllCustomers(adminId);
+    }
+}
