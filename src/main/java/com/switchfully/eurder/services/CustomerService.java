@@ -20,14 +20,38 @@ public class CustomerService {
     }
 
     public List<CustomerDto> getAllCustomers(String adminId) {
-        return customerRepository.getAllCustomers()
-                .stream()
-                .map(customer -> customerMapper.toDto(customer))
-                .collect(Collectors.toList());
+        if(isAdmin(adminId)){
+            return customerRepository.getAllCustomers()
+                    .stream()
+                    .map(customer -> customerMapper.toDto(customer))
+                    .collect(Collectors.toList());
+        }
+            throw new IllegalArgumentException("This user has not admin privilege");
+
     }
 
     public CustomerDto getCustomerById(String id){
-        return customerMapper.toDto(customerRepository.getCustomerById(id));
+        if(idExists(id)){
+            return customerMapper.toDto(customerRepository.getCustomerById(id));
+        }
+        throw new IllegalArgumentException("This id does not exist");
+    }
+
+
+    private boolean idExists(String id){
+        return customerRepository.getAllCustomers()
+                .stream()
+                .anyMatch(customer -> customer.getId().equals(id));
+    }
+
+    private boolean isAdmin(String id){
+        if(!idExists(id)){
+            throw new IllegalArgumentException("This admin id does not exist");
+        }
+        return customerRepository.getAllCustomers()
+                .stream()
+                .filter(customer -> customer.isAdmin())
+                .anyMatch(customer -> customer.getId().equals(id));
     }
 
 }

@@ -81,4 +81,8 @@ public class Customer {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
+
+    public Boolean isAdmin() {
+        return isAdmin;
+    }
 }
