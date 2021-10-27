@@ -15,6 +15,8 @@ public class CustomerRepository {
         this.customerDataBase = new HashMap<>();
         Customer customer1 = new Customer("Bob", "Marley", "bob@marley.be", "Rue blabla", "069696969");
         Customer customer2 = new Customer("Maria", "Marley", "maria@marley.be", "Rue blabla", "068686868", true);
+        System.out.println("id of customer1" + customer1.getId());
+        System.out.println("id of customer2 admin " + customer2.getId());
         customerDataBase.put(customer1.getId(), customer1);
         customerDataBase.put(customer2.getId(), customer2);
     }

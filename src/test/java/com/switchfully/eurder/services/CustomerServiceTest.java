@@ -2,6 +2,7 @@ package com.switchfully.eurder.services;
 
 import com.switchfully.eurder.api.dtos.CustomerDto;
 import com.switchfully.eurder.domain.Customer;
+import com.switchfully.eurder.exceptions.AuthorisationException;
 import com.switchfully.eurder.repositories.CustomerRepository;
 import com.switchfully.eurder.services.mappers.CustomerMapper;
 import org.junit.jupiter.api.*;
@@ -19,6 +20,7 @@ class CustomerServiceTest {
     private CustomerMapper customerMapper;
     private CustomerService customerService;
     private Customer admin;
+    private Customer customer;
 
     @BeforeEach
     void setup() {
@@ -29,6 +31,10 @@ class CustomerServiceTest {
                 .stream()
                 .filter(customer -> customer.isAdmin())
                 .findFirst().get();
+        customer = customerRepository.getAllCustomers()
+                .stream()
+                .filter(customer -> !customer.isAdmin())
+                .findFirst().get();
     }
 
     @Nested
@@ -37,7 +43,7 @@ class CustomerServiceTest {
     class testGetCustomers {
 
         @Test
-        void getCustomerById_returnCustomerDtoWithTheSameId(){
+        void getCustomerById_returnCustomerDtoWithTheSameId() {
 
             // when
             CustomerDto retrievedFromDB = customerService.getCustomerById(admin.getId());
@@ -47,7 +53,7 @@ class CustomerServiceTest {
         }
 
         @Test
-        void getCustomerByIdWithAWrongId_thenThrowIllegalArgumentException(){
+        void getCustomerByIdWithAWrongId_thenThrowIllegalArgumentException() {
             // Given
             String wrongId = UUID.randomUUID().toString();
 
@@ -57,7 +63,7 @@ class CustomerServiceTest {
         }
 
         @Test
-        void getAllCustomersWithAdminId(){
+        void getAllCustomersWithAdminId() {
             // given
             String goodId = admin.getId();
 
@@ -71,15 +77,14 @@ class CustomerServiceTest {
         }
 
         @Test
-        void getAllCustomersWithAWrongId_throwIllegalArgumentException(){
+        void getAllCustomersWithAWrongAdminId_throwIllegalArgumentException() {
             // given
-            String wrongId = UUID.randomUUID().toString();
+            String customerId = customer.getId();
 
             // then
-            assertThrows(IllegalArgumentException.class,() -> customerService.getAllCustomers(wrongId));
+            assertThrows(AuthorisationException.class, () -> customerService.getAllCustomers(customerId));
 
         }
-
 
     }
 }
