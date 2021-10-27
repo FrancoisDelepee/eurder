@@ -1,5 +1,6 @@
 package com.switchfully.eurder.services;
 
+import com.switchfully.eurder.api.dtos.CreateCustomerDto;
 import com.switchfully.eurder.api.dtos.CustomerDto;
 import com.switchfully.eurder.domain.Customer;
 import com.switchfully.eurder.exceptions.AuthorisationException;
@@ -21,6 +22,7 @@ class CustomerServiceTest {
     private CustomerService customerService;
     private Customer admin;
     private Customer customer;
+    private CreateCustomerDto customerToCreate;
 
     @BeforeEach
     void setup() {
@@ -35,6 +37,8 @@ class CustomerServiceTest {
                 .stream()
                 .filter(customer -> !customer.isAdmin())
                 .findFirst().get();
+
+        customerToCreate = new CreateCustomerDto("Ben", "uur", "ben@urr.be", "bxl", "0123456789");
     }
 
     @Nested
@@ -87,4 +91,40 @@ class CustomerServiceTest {
         }
 
     }
+
+    @Nested
+    @DisplayName("test of the creating customers methods")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class testCreatCustomers {
+
+        @Test
+        void whenCreatingACustomer_returnACustomerDtoEquivalent(){
+            // given
+
+
+            // when
+            CustomerDto createdCustomer = customerService.createCustomer(customerToCreate);
+
+            //then
+            assertEquals(createdCustomer.getFirstName(), customerToCreate.getFirstName());
+            assertEquals(createdCustomer.getLastName(), customerToCreate.getLastName());
+            assertEquals(createdCustomer.getEmail(), customerToCreate.getEmail());
+            assertEquals(createdCustomer.getAddress(), customerToCreate.getAddress());
+            assertEquals(createdCustomer.getPhoneNumber(), customerToCreate.getPhoneNumber());
+        }
+
+        @Test
+        void whenCreatingACustomerWithoutFirstName_throwException(){
+            // given
+            CreateCustomerDto badCustomerToCreate = new CreateCustomerDto(null, "uur", "ben@urr.be", "bxl", "0123456789");
+
+            //then
+            assertThrows(IllegalArgumentException.class, () -> customerService.createCustomer(badCustomerToCreate));
+
+
+
+        }
+    }
+
+
 }

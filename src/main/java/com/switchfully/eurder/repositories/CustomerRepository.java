@@ -1,5 +1,6 @@
 package com.switchfully.eurder.repositories;
 
+import com.switchfully.eurder.api.dtos.CustomerDto;
 import com.switchfully.eurder.domain.Customer;
 import org.springframework.stereotype.Component;
 
@@ -27,5 +28,10 @@ public class CustomerRepository {
 
     public Customer getCustomerById(String id){
         return customerDataBase.get(id);
+    }
+
+    public Customer createCustomer(Customer customer) {
+        this.customerDataBase.put(customer.getId(), customer);
+        return customerDataBase.get(customer.getId());
     }
 }

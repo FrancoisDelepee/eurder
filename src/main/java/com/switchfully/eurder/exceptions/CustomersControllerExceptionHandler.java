@@ -24,4 +24,10 @@ public class CustomersControllerExceptionHandler {
         logger.error(exception.getMessage());
         response.sendError(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
     }
+
+    @ExceptionHandler(UnexpectedException.class)
+    protected void unexpectedException(UnexpectedException exception, HttpServletResponse response) throws Exception{
+        logger.error(exception.getMessage());
+        response.sendError(HttpStatus.BAD_REQUEST.value(), exception.getMessage());
+    }
 }

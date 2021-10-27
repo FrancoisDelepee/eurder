@@ -1,7 +1,9 @@
 package com.switchfully.eurder.services;
 
+import com.switchfully.eurder.api.dtos.CreateCustomerDto;
 import com.switchfully.eurder.api.dtos.CustomerDto;
 import com.switchfully.eurder.exceptions.AuthorisationException;
+import com.switchfully.eurder.exceptions.UnexpectedException;
 import com.switchfully.eurder.repositories.CustomerRepository;
 import com.switchfully.eurder.services.mappers.CustomerMapper;
 import org.springframework.stereotype.Service;
@@ -21,22 +23,35 @@ public class CustomerService {
     }
 
     public List<CustomerDto> getAllCustomers(String adminId) {
+        if(!isValidInput(adminId)){
+            throw new IllegalArgumentException("adminId can not be blank or empty");
+        }
 
-        if(isValidInput(adminId) && idExists(adminId) && isAdmin(adminId)){
+        if(idExists(adminId) && isAdmin(adminId)){
             return customerRepository.getAllCustomers()
                     .stream()
                     .map(customer -> customerMapper.toDto(customer))
                     .collect(Collectors.toList());
         }
 
-        throw new IllegalArgumentException("Something wrong is happening!");
+        throw new UnexpectedException("Something wrong is happening!");
     }
 
     public CustomerDto getCustomerById(String id){
-        if(isValidInput(id) && idExists(id)){
+        if(!isValidInput(id)){
+            throw new IllegalArgumentException("An id must be provided");
+        }
+        if(idExists(id)){
             return customerMapper.toDto(customerRepository.getCustomerById(id));
         }
-        throw new IllegalArgumentException("Something wrong is happening!");
+        throw new UnexpectedException("Something wrong is happening!");
+    }
+
+    public CustomerDto createCustomer(CreateCustomerDto createCustomerDto) {
+        if(isCreateCustomerDtoValid(createCustomerDto)){
+            return customerMapper.toDto(customerRepository.createCustomer(customerMapper.toDomain(createCustomerDto)));
+        }
+        throw new UnexpectedException("Something unexpected happened");
     }
 
 
@@ -64,10 +79,23 @@ public class CustomerService {
     }
 
     private boolean isValidInput(String input){
-        if (input != null && !input.isEmpty() && !input.isBlank()){
-            return true;
-        }
-        throw new IllegalArgumentException("Your input can not be blank empty or null");
+        return input != null && !input.isEmpty() && !input.isBlank();
     }
+
+    private boolean isCreateCustomerDtoValid(CreateCustomerDto createCustomerDto){
+        if(!isValidInput(createCustomerDto.getFirstName())){
+            throw new IllegalArgumentException("The First name must be provided");
+        }
+        if(!isValidInput(createCustomerDto.getLastName())){
+            throw new IllegalArgumentException("The last name must be provided");
+        }
+
+        if(!isValidInput(createCustomerDto.getEmail())){
+            throw new IllegalArgumentException("The email must be provided");
+        }
+
+        return true;
+    }
+
 
 }
