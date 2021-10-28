@@ -67,7 +67,7 @@ public class CustomerService {
         throw new IllegalArgumentException("This id does not exist");
     }
 
-    private boolean isAdmin(String id) {
+    protected boolean isAdmin(String id) {
 
         if (customerRepository.getAllCustomers()
                 .stream()

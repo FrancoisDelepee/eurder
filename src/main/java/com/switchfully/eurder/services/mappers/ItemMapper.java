@@ -3,6 +3,7 @@ package com.switchfully.eurder.services.mappers;
 import com.switchfully.eurder.api.dtos.AddItemsDto;
 import com.switchfully.eurder.api.dtos.CreateGroupOfItemsDto;
 import com.switchfully.eurder.api.dtos.GroupOfItemsDto;
+import com.switchfully.eurder.api.dtos.GroupOfItemsToUpdateDto;
 import com.switchfully.eurder.domain.GroupOfItems;
 import com.switchfully.eurder.domain.Item;
 import org.springframework.stereotype.Component;
@@ -23,5 +24,9 @@ public class ItemMapper {
 
     public GroupOfItems addItemDtoToGroupItemDomain(AddItemsDto dto){
        return new GroupOfItems(dto);
+    }
+
+    public GroupOfItems groupOfItemsToUpdateToGroupItemDomain(GroupOfItemsToUpdateDto dto){
+        return new GroupOfItems(dto);
     }
 }

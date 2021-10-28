@@ -1,5 +1,6 @@
 package com.switchfully.eurder.repositories;
 
+import com.switchfully.eurder.api.dtos.AddItemsDto;
 import com.switchfully.eurder.api.dtos.GroupOfItemsDto;
 import com.switchfully.eurder.domain.GroupOfItems;
 import com.switchfully.eurder.domain.Item;
@@ -30,8 +31,8 @@ public class ItemRepository {
         return stock.get(groupOfItem.getId());
     }
 
-    public GroupOfItems addItem(List<Item> itemsToAdd, Item itemToAdd) {
-        System.out.println(itemsToAdd);
+    public GroupOfItems addItem(List<Item> itemsToAdd, AddItemsDto itemToAdd) {
+
         Supplier<GroupOfItems> potentiallyNeededGroupOfItems = () -> createNewGroupOfItem(new GroupOfItems(itemToAdd.getName(), itemToAdd.getDescription(), itemToAdd.getPrice()));
         GroupOfItems groupOfItems = stock.values().stream()
                 .filter(group -> group.getName().equals(itemToAdd.getName()))
@@ -41,5 +42,16 @@ public class ItemRepository {
         groupOfItems.addItem(itemsToAdd);
         stock.put(groupOfItems.getId(), groupOfItems);
         return stock.get(groupOfItems.getId());
+    }
+
+    public GroupOfItems getGroupOfItemsById(String id) {
+        return stock.get(id);
+    }
+
+    public GroupOfItems updateGroupOfItems(String groupOfItemId, GroupOfItems groupOfItems) {
+        stock.get(groupOfItemId).setName(groupOfItems.getName());
+        stock.get(groupOfItemId).setPrice(groupOfItems.getPrice());
+        stock.get(groupOfItemId).setDescription(groupOfItems.getDescription());
+        return stock.get(groupOfItemId);
     }
 }

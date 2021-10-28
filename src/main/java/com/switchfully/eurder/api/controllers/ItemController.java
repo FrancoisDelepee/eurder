@@ -1,9 +1,8 @@
 package com.switchfully.eurder.api.controllers;
 
 import com.switchfully.eurder.api.dtos.AddItemsDto;
-import com.switchfully.eurder.api.dtos.CreateGroupOfItemsDto;
 import com.switchfully.eurder.api.dtos.GroupOfItemsDto;
-import com.switchfully.eurder.api.dtos.ItemDto;
+import com.switchfully.eurder.api.dtos.GroupOfItemsToUpdateDto;
 import com.switchfully.eurder.services.ItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +16,7 @@ import java.util.List;
 public class ItemController {
 
     private final ItemService itemService;
-    private Logger logger = LoggerFactory.getLogger(ItemController.class);
+    private final Logger logger = LoggerFactory.getLogger(ItemController.class);
 
     public ItemController(ItemService itemService) {
         this.itemService = itemService;
@@ -27,8 +26,15 @@ public class ItemController {
     @GetMapping(produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public List<GroupOfItemsDto> getAllGroupsOfItems() {
-        System.out.println("GoI = " + itemService.getAllGroupOfItems());
+        logger.info("Asking for items");
         return itemService.getAllGroupOfItems();
+    }
+
+    @GetMapping(produces = "application/json", path = "/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public GroupOfItemsDto getGroupOfItemsById(@PathVariable String id){
+        System.out.println(itemService.getGroupOfItemsById(id));
+        return itemService.getGroupOfItemsById(id);
     }
 
     @PostMapping(consumes = "application/json", produces = "application/json")
@@ -36,5 +42,12 @@ public class ItemController {
     public GroupOfItemsDto addItems(@RequestBody AddItemsDto addItemsDto) {
         return itemService.addItems(addItemsDto);
     }
+
+    @PutMapping(consumes = "application/json", produces = "application/json", path = "/{groupOfItemsId}")
+    @ResponseStatus(HttpStatus.OK)
+    public GroupOfItemsDto updateItem(@PathVariable String groupOfItemsId, @RequestHeader String requesterId, @RequestBody GroupOfItemsToUpdateDto groupOfItemToUpdateDto ){
+        return itemService.updateItem(groupOfItemsId, requesterId, groupOfItemToUpdateDto);
+    }
+
 
 }

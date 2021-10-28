@@ -2,6 +2,7 @@ package com.switchfully.eurder.domain;
 
 import com.switchfully.eurder.api.dtos.AddItemsDto;
 import com.switchfully.eurder.api.dtos.CreateGroupOfItemsDto;
+import com.switchfully.eurder.api.dtos.GroupOfItemsToUpdateDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.UUID;
 
 public class GroupOfItems {
     private final String id;
-    private final String name;
+    private  String name;
     private String description;
     private final List<Item> items;
     private int amount;
@@ -28,6 +29,10 @@ public class GroupOfItems {
     }
 
     public GroupOfItems(AddItemsDto dto) {
+        this(dto.getName(), dto.getDescription(), dto.getPrice());
+    }
+
+    public GroupOfItems(GroupOfItemsToUpdateDto dto) {
         this(dto.getName(), dto.getDescription(), dto.getPrice());
     }
 
@@ -63,5 +68,19 @@ public class GroupOfItems {
         this.items.addAll(items);
     }
 
+    public void removeitem(List<Item> items){
+        this.items.removeAll(items);
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
 }
