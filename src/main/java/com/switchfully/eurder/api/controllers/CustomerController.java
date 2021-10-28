@@ -2,6 +2,7 @@ package com.switchfully.eurder.api.controllers;
 
 import com.switchfully.eurder.api.dtos.CreateCustomerDto;
 import com.switchfully.eurder.api.dtos.CustomerDto;
+import com.switchfully.eurder.api.dtos.UpdateCustomerDto;
 import com.switchfully.eurder.services.CustomerService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,19 +25,31 @@ public class CustomerController {
     @GetMapping(produces = "application/json")
     @ResponseStatus(HttpStatus.OK)
     public List<CustomerDto> getAllCustomer(@RequestHeader String adminId){
-        logger.info("getAllCustomers called");
+        logger.info("User " + adminId + " requested for all members");
         return customerService.getAllCustomers(adminId);
     }
 
-    @GetMapping(produces = "application/json", path = "/{id}")
+    @GetMapping(produces = "application/json", path = "/{customerId}")
     @ResponseStatus(HttpStatus.OK)
-    public CustomerDto getCustomer(@PathVariable String id){
-        return customerService.getCustomerById(id);
+    public CustomerDto getCustomer(@PathVariable String customerId, @RequestHeader String requesterId){
+        logger.info("User " + requesterId + " requested info about " + customerId);
+        return customerService.getCustomerById(customerId);
     }
 
     @PostMapping(consumes = "application/json", produces = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public CustomerDto createCustomer(@RequestBody CreateCustomerDto createCustomerDto){
-        return customerService.createCustomer(createCustomerDto);
+    //@RequiresRole(ADMIN)
+    //@RequiresPermission(CREATE_CUSTOMER)
+    public CustomerDto createCustomer(@RequestBody CreateCustomerDto createCustomerDto, @RequestHeader (required = false) String requesterId){
+        String requestedIdToLog = requesterId == null ? "anonymous":requesterId;
+        CustomerDto createdCustomer = customerService.createCustomer(createCustomerDto);
+        logger.info("User " + requestedIdToLog + " created member " + createdCustomer.getId());
+        return createdCustomer;
+    }
+
+    @PutMapping(consumes = "application/json", produces = "application/json", path = "/{customerId}")
+    @ResponseStatus(HttpStatus.OK)
+    public CustomerDto updateCustomer(@PathVariable String customerId, @RequestBody UpdateCustomerDto customerToUpdate, @RequestHeader String requesterId){
+        return customerService.updateCustomer(customerId, customerToUpdate, requesterId);
     }
 }

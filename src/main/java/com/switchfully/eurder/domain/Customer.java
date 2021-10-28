@@ -1,6 +1,7 @@
 package com.switchfully.eurder.domain;
 
 import com.switchfully.eurder.api.dtos.CreateCustomerDto;
+import com.switchfully.eurder.api.dtos.UpdateCustomerDto;
 
 import java.util.UUID;
 
@@ -16,6 +17,15 @@ public class Customer {
 
     public Customer(String firstName, String lastName, String email, String address, String phoneNumber) {
         this.id = UUID.randomUUID().toString();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+    }
+
+    public Customer(String id, String firstName, String lastName, String email, String address, String phoneNumber) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -40,6 +50,10 @@ public class Customer {
     public Customer(CreateCustomerDto customerDto, Boolean isAdmin){
         this(customerDto);
         this.isAdmin = isAdmin;
+    }
+
+    public Customer(UpdateCustomerDto updateCustomerDto){
+        this(updateCustomerDto.getId(), updateCustomerDto.getFirstName(), updateCustomerDto.getLastName(), updateCustomerDto.getEmail(), updateCustomerDto.getAddress(), updateCustomerDto.getPhoneNumber());
     }
 
     public String getId() {

@@ -2,6 +2,7 @@ package com.switchfully.eurder.services;
 
 import com.switchfully.eurder.api.dtos.CreateCustomerDto;
 import com.switchfully.eurder.api.dtos.CustomerDto;
+import com.switchfully.eurder.api.dtos.UpdateCustomerDto;
 import com.switchfully.eurder.exceptions.AuthorisationException;
 import com.switchfully.eurder.exceptions.UnexpectedException;
 import com.switchfully.eurder.repositories.CustomerRepository;
@@ -23,11 +24,11 @@ public class CustomerService {
     }
 
     public List<CustomerDto> getAllCustomers(String adminId) {
-        if(!isValidInput(adminId)){
+        if (!isValidInput(adminId)) {
             throw new IllegalArgumentException("adminId can not be blank or empty");
         }
 
-        if(idExists(adminId) && isAdmin(adminId)){
+        if (idExists(adminId) && isAdmin(adminId)) {
             return customerRepository.getAllCustomers()
                     .stream()
                     .map(customer -> customerMapper.toDto(customer))
@@ -37,25 +38,25 @@ public class CustomerService {
         throw new UnexpectedException("Something wrong is happening!");
     }
 
-    public CustomerDto getCustomerById(String id){
-        if(!isValidInput(id)){
+    public CustomerDto getCustomerById(String id) {
+        if (!isValidInput(id)) {
             throw new IllegalArgumentException("An id must be provided");
         }
-        if(idExists(id)){
+        if (idExists(id)) {
             return customerMapper.toDto(customerRepository.getCustomerById(id));
         }
         throw new UnexpectedException("Something wrong is happening!");
     }
 
     public CustomerDto createCustomer(CreateCustomerDto createCustomerDto) {
-        if(isCreateCustomerDtoValid(createCustomerDto)){
+        if (isCreateCustomerDtoValid(createCustomerDto)) {
             return customerMapper.toDto(customerRepository.createCustomer(customerMapper.toDomain(createCustomerDto)));
         }
         throw new UnexpectedException("Something unexpected happened");
     }
 
 
-    private boolean idExists(String id){
+    private boolean idExists(String id) {
 
         if (customerRepository.getAllCustomers()
                 .stream()
@@ -66,31 +67,31 @@ public class CustomerService {
         throw new IllegalArgumentException("This id does not exist");
     }
 
-    private boolean isAdmin(String id){
+    private boolean isAdmin(String id) {
 
         if (customerRepository.getAllCustomers()
                 .stream()
                 .filter(customer -> customer.isAdmin())
-                .anyMatch(customer -> customer.getId().equals(id))){
+                .anyMatch(customer -> customer.getId().equals(id))) {
 
             return true;
         }
         throw new AuthorisationException("This user has not admin privilege");
     }
 
-    private boolean isValidInput(String input){
+    private boolean isValidInput(String input) {
         return input != null && !input.isEmpty() && !input.isBlank();
     }
 
-    private boolean isCreateCustomerDtoValid(CreateCustomerDto createCustomerDto){
-        if(!isValidInput(createCustomerDto.getFirstName())){
+    private boolean isCreateCustomerDtoValid(CreateCustomerDto createCustomerDto) {
+        if (!isValidInput(createCustomerDto.getFirstName())) {
             throw new IllegalArgumentException("The First name must be provided");
         }
-        if(!isValidInput(createCustomerDto.getLastName())){
+        if (!isValidInput(createCustomerDto.getLastName())) {
             throw new IllegalArgumentException("The last name must be provided");
         }
 
-        if(!isValidInput(createCustomerDto.getEmail())){
+        if (!isValidInput(createCustomerDto.getEmail())) {
             throw new IllegalArgumentException("The email must be provided");
         }
 
@@ -98,4 +99,12 @@ public class CustomerService {
     }
 
 
+    public CustomerDto updateCustomer(String customerId, UpdateCustomerDto customerToUpdate, String requesterId) {
+        if (requesterId.equals(customerId) || isAdmin(requesterId)) {
+            return customerMapper.toDto(customerRepository.update(customerId, customerMapper.fromUpdateToDomain(customerToUpdate)));
+        }
+        throw new AuthorisationException("User : " + requesterId + "doesn't have the authorisation to perform this action");
+
+
+    }
 }

@@ -2,6 +2,7 @@ package com.switchfully.eurder.services.mappers;
 
 import com.switchfully.eurder.api.dtos.CreateCustomerDto;
 import com.switchfully.eurder.api.dtos.CustomerDto;
+import com.switchfully.eurder.api.dtos.UpdateCustomerDto;
 import com.switchfully.eurder.domain.Customer;
 import org.springframework.stereotype.Component;
 
@@ -16,4 +17,8 @@ public class CustomerMapper {
         return new Customer(customerCreateDto);
     }
 
+
+    public Customer fromUpdateToDomain(UpdateCustomerDto customerToUpdate) {
+        return new Customer(customerToUpdate);
+    }
 }

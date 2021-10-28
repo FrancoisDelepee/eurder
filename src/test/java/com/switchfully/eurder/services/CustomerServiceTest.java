@@ -2,6 +2,7 @@ package com.switchfully.eurder.services;
 
 import com.switchfully.eurder.api.dtos.CreateCustomerDto;
 import com.switchfully.eurder.api.dtos.CustomerDto;
+import com.switchfully.eurder.api.dtos.UpdateCustomerDto;
 import com.switchfully.eurder.domain.Customer;
 import com.switchfully.eurder.exceptions.AuthorisationException;
 import com.switchfully.eurder.repositories.CustomerRepository;
@@ -98,7 +99,7 @@ class CustomerServiceTest {
     class testCreatCustomers {
 
         @Test
-        void whenCreatingACustomer_returnACustomerDtoEquivalent(){
+        void whenCreatingACustomer_returnACustomerDtoEquivalent() {
             // given
 
 
@@ -114,16 +115,135 @@ class CustomerServiceTest {
         }
 
         @Test
-        void whenCreatingACustomerWithoutFirstName_throwException(){
+        void whenCreatingACustomerWithoutFirstName_throwException() {
             // given
             CreateCustomerDto badCustomerToCreate = new CreateCustomerDto(null, "uur", "ben@urr.be", "bxl", "0123456789");
 
             //then
             assertThrows(IllegalArgumentException.class, () -> customerService.createCustomer(badCustomerToCreate));
 
+        }
 
+        @Test
+        void whenCreatingACustomerWithoutLastName_throwException() {
+            // given
+            CreateCustomerDto badCustomerToCreate = new CreateCustomerDto("Ben", "", "ben@urr.be", "bxl", "0123456789");
+
+            //then
+            assertThrows(IllegalArgumentException.class, () -> customerService.createCustomer(badCustomerToCreate));
 
         }
+
+        @Test
+        void whenCreatingACustomerWithoutEmailName_throwException() {
+            // given
+            CreateCustomerDto badCustomerToCreate = new CreateCustomerDto("Ben", "Uur", " ", "bxl", "0123456789");
+
+            //then
+            assertThrows(IllegalArgumentException.class, () -> customerService.createCustomer(badCustomerToCreate));
+
+        }
+    }
+
+    @Nested
+    @DisplayName("test of the updating customers methods")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    class testUpdateCustomers {
+
+
+        @Test
+        void whenUpdatingCustomer_returnCustomerDtoWithUpdatedData(){
+            // given
+            String customerToUpdateId = customer.getId();
+            UpdateCustomerDto dataToUpdate = new UpdateCustomerDto(customer.getId(),"Bob", "uur", "bob@urr.be", "bxl", "0123456789");
+            String requesterId = customer.getId();
+
+            // when
+            CustomerDto updatedCustomer = customerService.updateCustomer(customerToUpdateId, dataToUpdate, requesterId);
+
+            // then
+            assertTrue(updatedCustomer.getId().equals(customerToUpdateId));
+            assertEquals(updatedCustomer.getFirstName(), dataToUpdate.getFirstName());
+            assertEquals(updatedCustomer.getLastName(), dataToUpdate.getLastName());
+            assertEquals(updatedCustomer.getEmail(), dataToUpdate.getEmail());
+            assertEquals(updatedCustomer.getAddress(), dataToUpdate.getAddress());
+
+        }
+
+        @Test
+        void whenUpdatingCustomerWithAdminRequesterId_returnCustomerDtoWithUpdatedData(){
+            // given
+            String customerToUpdateId = customer.getId();
+            UpdateCustomerDto dataToUpdate = new UpdateCustomerDto(customer.getId(),"Bob", "uur", "bob@urr.be", "bxl", "0123456789");
+            String requesterId = admin.getId();
+
+            // when
+            CustomerDto updatedCustomer = customerService.updateCustomer(customerToUpdateId, dataToUpdate, requesterId);
+
+            // then
+
+            assertEquals(updatedCustomer.getFirstName(), dataToUpdate.getFirstName());
+            assertEquals(updatedCustomer.getLastName(), dataToUpdate.getLastName());
+            assertEquals(updatedCustomer.getEmail(), dataToUpdate.getEmail());
+            assertEquals(updatedCustomer.getAddress(), dataToUpdate.getAddress());
+
+        }
+
+        @Test
+        void whenUpdatingCustomer_customerKeepSameId(){
+            // given
+            String customerToUpdateId = customer.getId();
+            UpdateCustomerDto dataToUpdate = new UpdateCustomerDto(customer.getId(),"Bob", "uur", "bob@urr.be", "bxl", "0123456789");
+            String requesterId = admin.getId();
+
+            // when
+            CustomerDto updatedCustomer = customerService.updateCustomer(customerToUpdateId, dataToUpdate, requesterId);
+            String updatedCustomerId = updatedCustomer.getId();
+            // then
+
+            assertEquals(customerToUpdateId, updatedCustomerId);
+
+        }
+
+        @Test
+        void whenUpdatingACustomerWithARandomRequesterId_shouldThrowException(){
+            // given
+            String customerToUpdateId = customer.getId();
+            UpdateCustomerDto dataToUpdate = new UpdateCustomerDto(customer.getId(),"Bob", "uur", "bob@urr.be", "bxl", "0123456789");
+            String badRequesterId = UUID.randomUUID().toString();
+
+            // Then
+
+            assertThrows(AuthorisationException.class, () -> customerService.updateCustomer(customerToUpdateId, dataToUpdate, badRequesterId));
+        }
+
+        @Test
+        void whenUpdatingACustomerWithARandomCustomerToUpdateId_shouldThrowException(){
+            // given
+            String badCustomerToUpdateId = UUID.randomUUID().toString();
+            UpdateCustomerDto dataToUpdate = new UpdateCustomerDto(customer.getId(),"Bob", "uur", "bob@urr.be", "bxl", "0123456789");
+            String requesterId = customer.getId();
+
+            // Then
+
+            assertThrows(AuthorisationException.class, () -> customerService.updateCustomer(badCustomerToUpdateId, dataToUpdate, requesterId));
+        }
+
+        @Test
+        void whenUpdatingACustomer_stillTheSameNumberOfCustomerInDB(){
+            // given
+            String customerToUpdateId = customer.getId();
+            UpdateCustomerDto dataToUpdate = new UpdateCustomerDto(customer.getId(),"Bob", "uur", "bob@urr.be", "bxl", "0123456789");
+            String requesterId = admin.getId();
+            long previousAmountOfCustomerInDB = customerRepository.getAllCustomers().size();
+
+            // when
+            CustomerDto updatedCustomer = customerService.updateCustomer(customerToUpdateId, dataToUpdate, requesterId);
+
+            // then
+            assertEquals(previousAmountOfCustomerInDB, customerRepository.getAllCustomers().size());
+        }
+
     }
 
 
