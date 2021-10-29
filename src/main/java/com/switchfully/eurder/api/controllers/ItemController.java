@@ -49,5 +49,4 @@ public class ItemController {
         return itemService.updateItem(groupOfItemsId, requesterId, groupOfItemToUpdateDto);
     }
 
-
 }

@@ -39,6 +39,10 @@ public class ItemRepository {
                 .findFirst()
                 .orElseGet(potentiallyNeededGroupOfItems);
 
+        for (Item item : itemsToAdd) {
+            item.setGroupId(groupOfItems.getId());
+        }
+
         groupOfItems.addItem(itemsToAdd);
         stock.put(groupOfItems.getId(), groupOfItems);
         return stock.get(groupOfItems.getId());

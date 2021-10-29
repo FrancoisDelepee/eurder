@@ -52,10 +52,6 @@ public class GroupOfItems {
         return description;
     }
 
-    public void setAmount(int amount) {
-        this.amount = amount;
-    }
-
     public String getId() {
         return id;
     }
@@ -68,8 +64,8 @@ public class GroupOfItems {
         this.items.addAll(items);
     }
 
-    public void removeitem(List<Item> items){
-        this.items.removeAll(items);
+    public boolean removeItem(String itemId){
+       return this.items.remove(itemId);
     }
 
     public void setName(String name) {
@@ -83,4 +79,6 @@ public class GroupOfItems {
     public void setPrice(int price) {
         this.price = price;
     }
+
+
 }

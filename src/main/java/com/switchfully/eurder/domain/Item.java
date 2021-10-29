@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public class Item {
     private final String id;
+    private String groupId;
     private final String name;
 
     public Item(String name) {
@@ -23,5 +24,13 @@ public class Item {
 
     public String getName() {
         return name;
+    }
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 }

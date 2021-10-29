@@ -9,7 +9,6 @@ import com.switchfully.eurder.repositories.CustomerRepository;
 import com.switchfully.eurder.services.mappers.CustomerMapper;
 import org.junit.jupiter.api.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
